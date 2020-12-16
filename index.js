@@ -61,21 +61,25 @@ class QuickReply extends Plugin {
 
   keyDown = async (event) => {
     if (!event.ctrlKey) return
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return
+
+    let messages = await this.getMessages(getChannelId())
+    let msgArray = messages.toArray().reverse()
+
+    let lastIndex =
+      msgArray.findIndex((msg) => msg.id === this.replyingToMessage) || 0
     if (event.key === 'ArrowUp') {
-      this.messageIndex++
+      this.messageIndex = lastIndex + 1
     } else if (event.key === 'ArrowDown') {
-      this.messageIndex--
-    } else {
-      return
+      this.messageIndex = lastIndex - 1
     }
 
-    if (this.messageIndex > 50) this.messageIndex = 50
+    if (this.messageIndex > msgArray.length) this.messageIndex = msgArray.length
     if (this.messageIndex < 0) {
       return this.deletePendingReply()
     }
 
-    let messages = await this.getMessages(getChannelId())
-    let message = messages.toArray().reverse()[this.messageIndex]
+    let message = msgArray[this.messageIndex]
     this.deletePendingReply({
       [this.QRSymbol]: true,
     })
