@@ -70,7 +70,9 @@ class QuickReply extends Plugin {
     }
 
     if (this.messageIndex > 50) this.messageIndex = 50
-    if (this.messageIndex < 0) this.messageIndex = 0
+    if (this.messageIndex < 0) {
+      return this.deletePendingReply()
+    }
 
     let messages = await this.getMessages(getChannelId())
     let message = messages.toArray().reverse()[this.messageIndex]
