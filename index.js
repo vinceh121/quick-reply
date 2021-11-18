@@ -93,7 +93,7 @@ class QuickReply extends Plugin {
   }
 
   async startPlugin() {
-    const { getChannel } = await getModule(['getChannel'])
+    const { getChannel } = await getModule(['getChannel', 'getDMFromUserId'])
     const { getMessages } = await getModule(['getMessages'])
     const { jumpToMessage } = await getModule(['jumpToMessage'])
     this.getChannel = getChannel
