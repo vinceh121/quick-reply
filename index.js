@@ -67,38 +67,48 @@ class QuickReply extends Plugin {
 
   keyDown = async (event) => {
     if (!event.ctrlKey) return
-    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return
+    if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      let messages = await this.getMessages(getChannelId())
+      let msgArray = messages.toArray().reverse()
 
-    let messages = await this.getMessages(getChannelId())
-    let msgArray = messages.toArray().reverse()
+      let lastIndex =
+        msgArray.findIndex((msg) => msg.id === this.replyingToMessage) || 0
+      if (event.key === 'ArrowUp') {
+        this.messageIndex = lastIndex + 1
+      } else if (event.key === 'ArrowDown') {
+        this.messageIndex = lastIndex - 1
+      }
 
-    let lastIndex =
-      msgArray.findIndex((msg) => msg.id === this.replyingToMessage) || 0
-    if (event.key === 'ArrowUp') {
-      this.messageIndex = lastIndex + 1
-    } else if (event.key === 'ArrowDown') {
-      this.messageIndex = lastIndex - 1
+      if (this.messageIndex > msgArray.length) this.messageIndex = msgArray.length
+      if (this.messageIndex < 0) {
+        return this.deletePendingReply()
+      }
+
+      let message = msgArray[this.messageIndex]
+      this.deletePendingReply({
+        [this.QRSymbol]: true,
+      })
+      this.createPendingReply(this.getCurrentChannel(), message, true)
+    } else if (event.key === 'Delete' && this.replyingToMessage) {
+      let messages = await this.getMessages(getChannelId())
+      let msgArray = messages.toArray().reverse()
+      let message = msgArray[this.messageIndex]
+
+      this.deletePendingReply({
+        [this.QRSymbol]: true,
+      })
+      this.deleteMessage(this.getCurrentChannel().id, message.id)
     }
-
-    if (this.messageIndex > msgArray.length) this.messageIndex = msgArray.length
-    if (this.messageIndex < 0) {
-      return this.deletePendingReply()
-    }
-
-    let message = msgArray[this.messageIndex]
-    this.deletePendingReply({
-      [this.QRSymbol]: true,
-    })
-    this.createPendingReply(this.getCurrentChannel(), message, true)
   }
 
   async startPlugin() {
     const { getChannel } = await getModule(['getChannel', 'getDMFromUserId'])
     const { getMessages } = await getModule(['getMessages'])
-    const { jumpToMessage } = await getModule(['jumpToMessage'])
+    const { jumpToMessage, deleteMessage } = await getModule(['jumpToMessage', 'deleteMessage'])
     this.getChannel = getChannel
     this.getMessages = getMessages
     this.jumpToMessage = jumpToMessage
+    this.deleteMessage = deleteMessage
 
     Dispatcher.subscribe(ActionTypes.CHANNEL_SELECT, this.channelSelect)
     Dispatcher.subscribe(
