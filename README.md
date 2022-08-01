@@ -8,7 +8,8 @@ Clone this repo (`git clone https://github.com/relative/quick-reply.git`) to you
 
 ## Usage
 
-| Shortcut                               | Action                             |
-| -------------------------------------- | ---------------------------------- |
-| <kbd>Ctrl</kbd> + <kbd>ArrowUp</kbd>   | Reply to earlier message (upwards) |
-| <kbd>Ctrl</kbd> + <kbd>ArrowDown</kbd> | Reply to later message (downwards) |
+| Shortcut                               | Action                                |
+| -------------------------------------- | ------------------------------------- |
+| <kbd>Ctrl</kbd> + <kbd>ArrowUp</kbd>   | Reply to earlier message (upwards)    |
+| <kbd>Ctrl</kbd> + <kbd>ArrowDown</kbd> | Reply to later message (downwards)    |
+| <kbd>Ctrl</kbd> + <kbd>Delete</kbd>    | After selecting a message, deletes it |
