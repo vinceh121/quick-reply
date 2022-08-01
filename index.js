@@ -2,8 +2,7 @@ const { Plugin } = require('powercord/entities')
 const {
   getModule,
   FluxDispatcher: Dispatcher,
-  channels: { getChannelId },
-  constants: { ActionTypes },
+  channels: { getChannelId }
 } = require('powercord/webpack')
 
 class QuickReply extends Plugin {
@@ -26,7 +25,7 @@ class QuickReply extends Plugin {
       showMentionToggle = channel.guild_id !== null // DM channel showMentionToggle = false
     }
     Dispatcher.dirtyDispatch({
-      type: ActionTypes.CREATE_PENDING_REPLY,
+      type: 'CREATE_PENDING_REPLY',
       channel,
       message,
       shouldMention,
@@ -41,7 +40,7 @@ class QuickReply extends Plugin {
   }
   async deletePendingReply(data) {
     Dispatcher.dirtyDispatch({
-      type: ActionTypes.DELETE_PENDING_REPLY,
+      type: 'DELETE_PENDING_REPLY',
       channelId: getChannelId(),
       ...data,
     })
@@ -110,13 +109,13 @@ class QuickReply extends Plugin {
     this.jumpToMessage = jumpToMessage
     this.deleteMessage = deleteMessage
 
-    Dispatcher.subscribe(ActionTypes.CHANNEL_SELECT, this.channelSelect)
+    Dispatcher.subscribe('CHANNEL_SELECT', this.channelSelect)
     Dispatcher.subscribe(
-      ActionTypes.CREATE_PENDING_REPLY,
+      'CREATE_PENDING_REPLY',
       this.onCreatePendingReply
     )
     Dispatcher.subscribe(
-      ActionTypes.DELETE_PENDING_REPLY,
+      'DELETE_PENDING_REPLY',
       this.onDeletePendingReply
     )
 
@@ -124,13 +123,13 @@ class QuickReply extends Plugin {
   }
 
   pluginWillUnload() {
-    Dispatcher.unsubscribe(ActionTypes.CHANNEL_SELECT, this.channelSelect)
+    Dispatcher.unsubscribe('CHANNEL_SELECT', this.channelSelect)
     Dispatcher.unsubscribe(
-      ActionTypes.CREATE_PENDING_REPLY,
+      'CREATE_PENDING_REPLY',
       this.onCreatePendingReply
     )
     Dispatcher.unsubscribe(
-      ActionTypes.DELETE_PENDING_REPLY,
+      'DELETE_PENDING_REPLY',
       this.onDeletePendingReply
     )
     window.removeEventListener('keydown', this.keyDown)
